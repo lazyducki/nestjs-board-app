@@ -19,6 +19,12 @@ import { Board } from './board.entity';
 export class BoardsController {
   constructor(private boardsServie: BoardsService) {}
 
+  @Post()
+  @UsePipes(ValidationPipe)
+  createBoard(@Body() createBoardDto: CreateBoardDto): Promise<Board> {
+    return this.boardsServie.createBoard(createBoardDto);
+  }
+
   @Get('/:id')
   getBoardById(@Param('id') id: number): Promise<Board> {
     return this.boardsServie.getBoardById(id);

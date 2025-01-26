@@ -13,6 +13,10 @@ export class BoardsService {
     private boardRespository: BoardRespository,
   ) {}
 
+  createBoard(createBoardDto: CreateBoardDto): Promise<Board> {
+    return this.boardRespository.createBoard(createBoardDto);
+  }
+
   async getBoardById(id: number): Promise<Board> {
     const found = await this.boardRespository.findOne({
       where: { id: id },
@@ -24,18 +28,6 @@ export class BoardsService {
     return found;
   }
 
-  async createBoard(createBoardDto: CreateBoardDto): Promise<Board> {
-    const { title, description } = createBoardDto;
-
-    const board = this.boardRespository.create)({ //
-      title,
-      description,
-      status: BoardStatus.PUBLIC
-    })
-
-    await this.boardRespository.save(board);
-    return board;
-  }
   // private boards: Board[] = [];
 
   // getAllBoards(): Board[] {
