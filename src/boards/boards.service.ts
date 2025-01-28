@@ -13,10 +13,20 @@ export class BoardsService {
     private boardRespository: BoardRespository,
   ) {}
 
+  /**
+   * 보드생성
+   * @param createBoardDto
+   * @returns
+   */
   createBoard(createBoardDto: CreateBoardDto): Promise<Board> {
     return this.boardRespository.createBoard(createBoardDto);
   }
 
+  /**
+   * id로 찾기
+   * @param id
+   * @returns
+   */
   async getBoardById(id: number): Promise<Board> {
     const found = await this.boardRespository.findOne({
       where: { id: id },
@@ -26,6 +36,42 @@ export class BoardsService {
       throw new NotFoundException(`Can't find Board with id ${id}`);
     }
     return found;
+  }
+
+  /**
+   * 삭제
+   * @param id
+   */
+  async deleteBoard(id: number): Promise<void> {
+    const result = await this.boardRespository.delete(id);
+
+    if (result.affected === 0) {
+      throw new NotFoundException(`Can't find Board with id ${id}`);
+    }
+
+    console.log(result);
+  }
+
+  /**
+   * 업데이트
+   * @param id
+   * @param status
+   */
+  async updateBoardStatus(id: number, status: BoardStatus): Promise<Board> {
+    const board = await this.getBoardById(id);
+
+    board.status = status;
+    await this.boardRespository.save(board);
+
+    return board;
+  }
+
+  /**
+   * 모두 조회
+   * @returns
+   */
+  async getAllBoards(): Promise<Board[]> {
+    return await this.boardRespository.find();
   }
 
   // private boards: Board[] = [];

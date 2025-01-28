@@ -4,8 +4,10 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -14,8 +16,10 @@ import { BoardStatus } from './board-status.enum';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { BoardStatusValidationPipe } from './pipes/board-status-validation.pipe';
 import { Board } from './board.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('boards')
+@UseGuards(AuthGuard()) //모든 라우트에 적용
 export class BoardsController {
   constructor(private boardsServie: BoardsService) {}
 
@@ -30,6 +34,29 @@ export class BoardsController {
     return this.boardsServie.getBoardById(id);
   }
 
+  @Delete('/:id')
+  deleteBoard(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.boardsServie.deleteBoard(id);
+  }
+
+  @Get()
+  getAllBoard(): Promise<Board[]> {
+    return this.boardsServie.getAllBoards();
+  }
+
+  /**
+   * 업데이트
+   * @param id
+   * @param status
+   * @returns
+   */
+  @Patch('/:id/status')
+  updateBoardStatus(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('status', BoardStatusValidationPipe) status: BoardStatus,
+  ): Promise<Board> {
+    return this.boardsServie.updateBoardStatus(id, status);
+  }
   // getAllBoard(): Board[] {
   //   return this.boardsServie.getAllBoards();
   // }
