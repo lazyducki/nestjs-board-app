@@ -1,4 +1,11 @@
-import { Body, Controller, Post, Req, UseGuards, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Req,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -29,7 +36,7 @@ export class AuthController {
     console.log('=========test start===========');
     console.log(req.user);
     console.log(req.body);
-     console.log(user);
+    console.log(user);
     console.log('=========test end===========');
   }
 }
