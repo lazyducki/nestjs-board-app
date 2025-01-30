@@ -43,8 +43,8 @@ export class BoardsService {
    * 삭제
    * @param id
    */
-  async deleteBoard(id: number): Promise<void> {
-    const result = await this.boardRespository.delete(id);
+  async deleteBoard(id: number, user: User): Promise<void> {
+    const result = await this.boardRespository.delete({ id, user });
 
     if (result.affected === 0) {
       throw new NotFoundException(`Can't find Board with id ${id}`);
@@ -71,8 +71,12 @@ export class BoardsService {
    * 모두 조회
    * @returns
    */
-  async getAllBoards(): Promise<Board[]> {
-    return await this.boardRespository.find();
+  async getAllBoards(user: User): Promise<Board[]> {
+    const query = this.boardRespository.createQueryBuilder('board');
+    query.where('board.userId = :userId', { userId: user.id });
+    const boards = await query.getMany();
+    return boards;
+    // return await this.boardRespository.find();
   }
 
   // private boards: Board[] = [];

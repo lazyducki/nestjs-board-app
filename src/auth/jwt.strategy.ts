@@ -3,6 +3,9 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserRepository } from './user.repository';
 import { User } from './user.entity';
+import * as config from 'config';
+
+const jwtConfig = config.get('jwt');
 
 /**
  * 요청이 왔을 경우 요청에 포함된 토큰고 함께 확인 하는 기능으로 추청된다.
@@ -12,7 +15,7 @@ import { User } from './user.entity';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private userRepository: UserRepository) {
     super({
-      secretOrKey: 'lazyduck',
+      secretOrKey: process.env.JWT_SECRET || jwtConfig.secret,
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     }); //부모 컴포넌트 사용 위해
   }

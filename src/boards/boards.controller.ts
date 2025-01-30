@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   ParseIntPipe,
   Patch,
@@ -23,6 +24,7 @@ import { User } from 'src/auth/user.entity';
 @Controller('boards')
 @UseGuards(AuthGuard()) //모든 라우트에 적용
 export class BoardsController {
+  private logger = new Logger('BoardsController');
   constructor(private boardsServie: BoardsService) {}
 
   @Post()
@@ -31,6 +33,9 @@ export class BoardsController {
     @Body() createBoardDto: CreateBoardDto,
     @GetUser() user: User,
   ): Promise<Board> {
+    this.logger.verbose(
+      `User "${user.username}" creating a new board. Payload: ${JSON.stringify(createBoardDto)}`,
+    );
     return this.boardsServie.createBoard(createBoardDto, user);
   }
 
@@ -40,13 +45,17 @@ export class BoardsController {
   }
 
   @Delete('/:id')
-  deleteBoard(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.boardsServie.deleteBoard(id);
+  deleteBoard(
+    @Param('id', ParseIntPipe) id: number,
+    @GetUser() user: User,
+  ): Promise<void> {
+    return this.boardsServie.deleteBoard(id, user);
   }
 
   @Get()
-  getAllBoard(): Promise<Board[]> {
-    return this.boardsServie.getAllBoards();
+  getAllBoard(@GetUser() user: User): Promise<Board[]> {
+    this.logger.verbose(`User "${user.username}" trying to get all boards`);
+    return this.boardsServie.getAllBoards(user);
   }
 
   /**
